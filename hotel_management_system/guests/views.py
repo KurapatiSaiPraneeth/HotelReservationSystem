@@ -62,6 +62,8 @@ def dashboard(request):
         rooms_url = reverse('hotels:room_list', kwargs={'hotel_id': hotel.id})
         hotel_list[hotel.id]["rooms_url"] = rooms_url
         hotel_list[hotel.id]["min_room_price"] = hotel.min_room_price
+    if not hotel_list:
+        messages.warning(request, 'No Hotels are available at this moment !!!')
     context = {
         "hotel_list": hotel_list
     }

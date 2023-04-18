@@ -24,7 +24,6 @@ def room_list(request, hotel_id):
     hotel = get_object_or_404(Hotel, id=hotel_id)
 
     rooms = Room.objects.filter(hotel=hotel, available_to__gte=current_time.date())
-    context = {'hotel': hotel, 'rooms': rooms}
     room_list = {}
 
     for room in rooms:
@@ -39,6 +38,7 @@ def room_list(request, hotel_id):
     if not room_list:
         messages.warning(request, 'No rooms are available at this moment !!!')
     context = {
+        "hotel_name": hotel.name,
         "room_list": room_list
     }
     return render(request, 'hotels/room_list_view.html', context)
@@ -50,7 +50,7 @@ def room_detail(request, room_id):
         "room_reservation": {},
         }
     room_type = room_record.category
-    room_detail_dict["room_reservation"]["room_type"] = room_type
+    room_detail_dict["room_reservation"]["room_type"] = f"{room_record.hotel} - {room_type}"
     room_detail_url = reverse('hotels:room_detail', kwargs={'room_id': room_id})
     room_detail_dict["room_reservation"]["room_detail_url"] = room_detail_url
 
@@ -93,6 +93,11 @@ def check_room_availability(request, room_record, guest_checkin, guest_checkout,
         messages.warning(request, f'Only {room_record.capacity} guests allowed for {room_record.category} room type !!! ')
         return False
 
+    check_past_reservation = check_user_reservation(request, guest_checkin, guest_checkout)
+    if check_past_reservation:
+        messages.warning(request, f'You already have the reservation. Please choose different dates !!! ')
+        return False
+
     total_nights = (guest_checkout - guest_checkin).days
     return room_record.price * total_nights * int(no_of_rooms)
 
@@ -127,6 +132,19 @@ def room_reservation(request, room_id, **kwargs):
 
         messages.success(request, 'Your payment has been received. Your reservation is confirmed.')
     return redirect('hotels:reservation_history')
+
+
+def check_user_reservation(request, form_checkin, form_checkout):
+    user_obj = request.user
+    user_reservations = Reservation.objects.filter(
+        user=user_obj
+        ).values('room','check_in','check_out','adults', 'total_price').annotate(no_of_rooms=Count('room'))
+    for reservation in user_reservations:
+        start_date = reservation.get("check_in")
+        end_date = reservation.get("check_out")
+    if start_date <= form_checkin <= end_date:
+        return True
+    return False
 
 
 @login_required(login_url='guests:login')

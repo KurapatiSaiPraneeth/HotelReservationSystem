@@ -88,18 +88,18 @@ DATABASES = {
     }
 }
 
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'hotel_management_system',
-#         'USER': 'admin',
-#         'PASSWORD': 'Admin1234',
-#         'HOST': 'database-1.csodqbtgvyzr.us-east-1.rds.amazonaws.com',   # Or an IP Address that your DB is hosted on
-#         'PORT': '3306',
-#     }
-# }
-
+'''
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'hotel_management_system',
+        'USER': 'admin',
+        'PASSWORD': 'Admin1234',
+        'HOST': 'database-1.csodqbtgvyzr.us-east-1.rds.amazonaws.com',   # Or an IP Address that your DB is hosted on
+        'PORT': '3306',
+    }
+}
+'''
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
@@ -166,3 +166,4 @@ AWS_S3_REGION_NAME = 'us-east-2'
 # Use the following if you want to store files with a custom domain
 AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
 '''
+
