@@ -40,6 +40,9 @@ def login_view(request):
         form = LoginForm()
     return render(request, 'guests/login_form.html', {'form': form})
 
+def custom_admin_logout(request):
+    logout(request)
+    return redirect('guests:login')
 
 def logout_view(request):
     logout(request)

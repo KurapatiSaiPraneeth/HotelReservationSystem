@@ -46,6 +46,12 @@
     .btn-primary:hover {
       background-color: #005cbf;
     }
+
+      .qdisabled {
+    pointer-events: none;
+    opacity: 0.6;
+    /* Optionally, add other styles to indicate that the link is disabled */
+  }
   </style>
 </head>
 <body>
@@ -55,42 +61,27 @@
         <thead>
         <tr>
             <th>#</th>
-            <th>Room Type</th>
+            <th>Hotel</th>
             <th>Check-In Date</th>
             <th>Check-Out Date</th>
             <th>Guests</th>
+            <th>Rooms</th>
             <th>Total Cost</th>
             <th></th>
         </tr>
         </thead>
         <tbody>
+        {% for reservation in reservations %}
         <tr>
-            <td>1</td>
-            <td>Deluxe Room</td>
-            <td>2023-04-18</td>
-            <td>2023-04-21</td>
-            <td>2 Adults</td>
-            <td>$800</td>
-            <td><a href="#" class="btn btn-primary">Cancle Reservation</a></td>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ reservation.Hotel }}</td>
+            <td>{{ reservation.checkin }}</td>
+            <td>{{ reservation.checkout }}</td>
+            <td>{{ reservation.guests }}</td>
+            <td>{{ reservation.rooms }}</td>
+            <td><a href="{{ reservation.cancle_reservation_url }}" class="btn btn-primary {{ reservation.qdisabled }}" >Cancle Reservation</a></td>
         </tr>
-        <tr>
-            <td>2</td>
-            <td>Executive Suite</td>
-            <td>2023-05-01</td>
-            <td>2023-05-05</td>
-            <td>3 Adults, 1 Child</td>
-            <td>$2,200</td>
-            <td><a href="#" class="btn btn-primary">Cancle Reservation</a></td>
-        </tr>
-        <tr>
-            <td>3</td>
-            <td>Standard Room</td>
-            <td>2023-06-15</td>
-            <td>2023-06-19</td>
-            <td>2 Adults, 2 Children</td>
-            <td>$900</td>
-            <td><a href="#" class="btn btn-primary">Cancle Reservation</a></td>
-        </tr>
+       {% endfor %}
         </tbody>
     </table>
 </div>

@@ -4,6 +4,7 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils import timezone
+from django.db.models import Count
 from pytz import timezone as pytimezone
 import datetime
 import ast
@@ -130,17 +131,42 @@ def room_reservation(request, room_id, **kwargs):
 
 @login_required(login_url='guests:login')
 def reservation_history(request):
-    user_reservations = Reservation.objects.all()
+    user_obj = request.user
 
-    history = {}
+    history = []
+
+    user_reservations = Reservation.objects.filter(
+        user=user_obj
+        ).values('room','check_in','check_out','adults', 'total_price').annotate(no_of_rooms=Count('room'))
+
+    for reservation in user_reservations:
+        r = {}
+
+        room_obj = Room.objects.get(id=int(reservation.get("room")))
+        r["Hotel"] = f'{room_obj.hotel}-{room_obj.category}'
+        r["checkin"] = reservation.get("check_in")
+        r["qdisabled"] = "qdisabled" if r["checkin"] <= current_time.date() else ""
+        print("***", r["checkin"], current_time.date())
+        r["checkout"] = reservation.get("check_out")
+        r["guests"] = reservation.get("adults")
+        r["rooms"] = reservation.get("no_of_rooms")
+        cancle_reservation_url = reverse('hotels:cancle_reservation', kwargs={"room_id": room_obj.id, "checkin":r["checkin"].strftime('%Y-%m-%d'), "checkout":r["checkout"].strftime('%Y-%m-%d')})
+        r["cancle_reservation_url"] = cancle_reservation_url
+        history.append(r)
 
     context = {"reservations": history}
     return render(request, 'hotels/reservation_list.html', context)
 
 
 @login_required(login_url='guests:login')
-def cancle_reservation():
-    context = {}
-    return render(request, 'hotels/room_detail_view.html', context)
+def cancle_reservation(request, room_id, checkin, checkout):
+    user_obj = request.user
+    Reservation.objects.filter(
+            user=user_obj,
+            check_in = checkin,
+            check_out = checkout
+            ).delete()
+    messages.success(request, 'Your reservation has been cancelled.')
+    return redirect('hotels:reservation_history')
 
 
