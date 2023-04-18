@@ -1,0 +1,97 @@
+{% extends 'guests/guestbase.html' %}
+{% load static %}
+{% block content %}
+<head xmlns="http://www.w3.org/1999/html">
+    <style>
+
+		/* Style the form */
+		form {
+			background-color: #f2f2f2;
+			padding: 20px;
+			border-radius: 5px;
+		}
+
+		/* Style the buttons */
+		button {
+			margin-top: 10px;
+		}
+
+		.btn-primary {
+			background-color: #007bff;
+		}
+
+		.btn-success {
+			background-color: #28a745;
+		}
+	</style>
+</head>
+<body>
+
+<div class="container mt-5">
+    <div class="row">
+        {% for room_reservation, room_details in room_detail_dict.items %}
+        {% if room_reservation %}
+        <div class="col-md-6">
+            <h3>Room Reservation Details</h3>
+            <form method="post" action="{{ room_details.room_detail_url }}">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="checkin">Check-In Date:</label>
+                    <input type="date" class="form-control" id="checkin" name="checkin_date" value="{{ room_details.checkin_date }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="checkout">Check-Out Date:</label>
+                    <input type="date" class="form-control" id="checkout" name="checkout_date" value="{{ room_details.checkout_date }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="roomtype">Room Type:</label>
+                    <input type="text" class="form-control" id="roomtype" value="{{ room_details.room_type }}" disabled>
+                </div>
+                <div class="form-group">
+                    <label for="guests">Number of Guests:</label>
+                    <input type="number" class="form-control" id="guests" name="no_of_guests" value="{{ room_details.no_of_guests }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="total_rooms">Number of Rooms:</label>
+                    <input type="number" class="form-control" id="total_rooms" name="no_of_rooms" value="{{ room_details.no_of_rooms }}" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Check Availability</button>
+            </form>
+        </div>
+        {% endif %}
+        {% if room_details.payment_details %}
+        <div class="col-md-6">
+            <h3>Payment Details</h3>
+            <form method="post" action="{{ room_details.reservation_url }}" >
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="cardname">Name on Card:</label>
+                    <input type="text" class="form-control" id="cardname" required>
+                </div>
+                <div class="form-group">
+                    <label for="cardnumber">Card Number:</label>
+                    <input type="text" class="form-control" id="cardnumber" required>
+                </div>
+                <div class="form-group">
+                    <label for="expdate">Expiration Date:</label>
+                    <input type="month" class="form-control" id="expdate" required>
+                </div>
+                <div class="form-group">
+                    <label for="cvv">CVV:</label>
+                    <input type="text" class="form-control" id="cvv" required>
+                </div>
+                <div class="form-group">
+                    <label for="total_price">Total Price:</label>
+                    <input type="text" class="form-control" id="total_price" name="total_price_paid" value="${{ room_details.payment_details }}" disabled>
+                    <input type="hidden" name="room_details" value="{{ room_details }}">
+                </div>
+                <button type="submit" class="btn btn-success">Pay Now</button>
+            </form>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+</div>
+</body>
+{% endblock %}

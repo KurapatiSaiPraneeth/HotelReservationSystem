@@ -1,0 +1,61 @@
+{% extends 'guests/guestbase.html' %}
+{% load static %}
+{% block title %}Available Hotels{% endblock %}
+
+{% block content %}
+<head>
+  <style>
+    .hotel-card {
+      margin-bottom: 30px;
+    }
+    .hotel-card img {
+      width: 100%;
+      height: 250px;
+      object-fit: cover;
+    }
+    .hotel-card .card-body {
+      padding: 20px;
+    }
+    .hotel-card .card-title {
+      font-size: 24px;
+      margin-bottom: 15px;
+    }
+    .hotel-card .card-text {
+      font-size: 18px;
+      margin-bottom: 15px;
+    }
+    .hotel-card .btn {
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1 class="text-center mb-5">Available Hotels</h1>
+
+  <div class="row">
+  {% for hotel_id, hotel_data in hotel_list.items %}
+    <!-- Hotel -->
+    <div class="col-md-6">
+      <div class="card hotel-card">
+        <img src="{{ hotel_data.photo.url }}" alt="Hotel 5">
+        <div class="card-body">
+          <h2 class="card-title">{{ hotel_data.name }}</h2>
+          <p class="card-text">{{ hotel_data.description }}</p>
+          <p>
+            Address: {{ hotel_data.address }}
+          </p>
+          <p>
+            Starting Price: ${{ hotel_data.min_room_price }} per night
+          </p>
+          <a href="{{ hotel_data.rooms_url }}" class="btn btn-primary">Book Now</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+</body>
+{% endblock %}

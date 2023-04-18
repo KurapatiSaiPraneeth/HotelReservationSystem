@@ -1,0 +1,44 @@
+{% extends 'guests/guestbase.html' %}
+{% load static %}
+{% block title %}Available Rooms{% endblock %}
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <title>Hotel Rooms Template</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+    .card {
+      margin-bottom: 20px;
+    }
+    .card-img-top {
+      height: 300px;
+      object-fit: cover;
+    }
+
+  </style>
+</head>
+<body>
+
+<div class="container">
+    <h1 class="text-center my-5">Hotel Rooms</h1>
+    <div class="row">
+        {% for room_id, room_data in room_list.items %}
+        <div class="col-md-4">
+            <div class="card">
+                <img class="card-img-top" src="{{ room_data.photo.url }}" alt="Room Image">
+                <div class="card-body">
+                    <h5 class="card-title">{{ room_data.category }}</h5>
+                    <p class="card-text">{{ room_data.description }}</p>
+                    <p class="card-text">Price: ${{ room_data.price }} per night</p>
+                    <a href="{{ room_data.room_detail_url }}" class="btn btn-primary">Book Now</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+
+    </div>
+</div>
+</body>
+{% endblock %}
